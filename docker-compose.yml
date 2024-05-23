@@ -1,0 +1,80 @@
+services:
+  trino-coordinator:
+    image: 'trinodb/trino:latest'
+    hostname: trino-coordinator
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./etc:/usr/lib/trino/etc:ro
+    networks:
+      - trino-network
+
+  postgresdb:
+    image: 'postgres:latest'
+    hostname: postgresdb
+    ports:
+      - '54321:5432'
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: metastore_db
+    networks:
+      - trino-network
+
+  # hive-metastore:
+  #   build: ./hive-metastore
+  #   hostname: hive-metastore
+  #   ports:
+  #     - '9083:9083' # Metastore Thrift
+  #   environment:
+  #     METASTORE_DB_HOSTNAME: postgresdb
+  #     METASTORE_DB_PORT: 5432
+  #     METASTORE_DB_USERNAME: admin
+  #     METASTORE_DB_PASSWORD: admin
+  #     METASTORE_DB_DATABASE: metastore_db
+  #   depends_on:
+  #     - postgresdb
+  #   networks:
+  #     - trino-network
+  
+  hive-metastore:
+    build: ./hive-metastore
+    hostname: hive-metastore
+    # image: 'bitsondatadev/hive-metastore:latest'
+    ports:
+      - '9083:9083' # Metastore Thrift
+    volumes:
+      - ./conf/metastore-site.xml:/opt/apache-hive-metastore-3.0.0-bin/conf/metastore-site.xml:ro
+    environment:
+      METASTORE_TYPE: postgres
+      METASTORE_DB_HOSTNAME: postgresdb
+      METASTORE_DB_PORT: 5432
+    depends_on:
+      - postgresdb
+    networks:
+      - trino-network
+
+  minio:
+    image: 'minio/minio:latest'
+    hostname: minio
+    container_name: minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server --console-address ":9001" /data
+    networks:
+      - trino-network
+
+volumes:
+  minio-data:
+    driver: local
+
+
+networks:
+  trino-network:
+    driver: bridge
