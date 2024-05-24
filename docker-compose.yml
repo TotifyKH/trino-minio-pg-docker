@@ -1,11 +1,11 @@
 services:
-  trino-coordinator:
+  trino:
     image: 'trinodb/trino:latest'
-    hostname: trino-coordinator
+    hostname: trino
     ports:
       - '8080:8080'
     volumes:
-      - ./etc:/usr/lib/trino/etc:ro
+      - ./etc:/etc/trino
     networks:
       - trino-network
 
@@ -20,22 +20,6 @@ services:
       POSTGRES_DB: metastore_db
     networks:
       - trino-network
-
-  # hive-metastore:
-  #   build: ./hive-metastore
-  #   hostname: hive-metastore
-  #   ports:
-  #     - '9083:9083' # Metastore Thrift
-  #   environment:
-  #     METASTORE_DB_HOSTNAME: postgresdb
-  #     METASTORE_DB_PORT: 5432
-  #     METASTORE_DB_USERNAME: admin
-  #     METASTORE_DB_PASSWORD: admin
-  #     METASTORE_DB_DATABASE: metastore_db
-  #   depends_on:
-  #     - postgresdb
-  #   networks:
-  #     - trino-network
   
   hive-metastore:
     build: ./hive-metastore
