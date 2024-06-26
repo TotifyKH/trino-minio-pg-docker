@@ -22,9 +22,9 @@ services:
       - trino-network
   
   hive-metastore:
-    build: ./hive-metastore
+    # build: ./hive-metastore
     hostname: hive-metastore
-    # image: 'bitsondatadev/hive-metastore:latest'
+    image: 'docker.dev.digitaleconomy.gov.kh/trino-minio-pg-docker-hive-metastore:v1.0.0'
     ports:
       - '9083:9083' # Metastore Thrift
     volumes:
