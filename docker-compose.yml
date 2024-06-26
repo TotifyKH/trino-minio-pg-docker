@@ -1,6 +1,6 @@
 services:
   trino:
-    image: 'trinodb/trino:445'
+    image: 'trinodb/trino:latest'
     hostname: trino
     ports:
       - '8080:8080'
