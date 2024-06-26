@@ -20,7 +20,8 @@ CREATE TABLE minio.test.exchange_rate (
 )
 WITH (
     external_location = 's3a://test/nbc_exchange_rate',
-    format = 'CSV'
+    format = 'CSV',
+    skip_header_line_count = 1
 );
 ```
 Create a table with the external_location pointing to your file path in minio.
