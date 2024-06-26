@@ -1,6 +1,6 @@
 services:
   trino:
-    image: 'trinodb/trino:latest'
+    image: 'trinodb/trino:445'
     hostname: trino
     ports:
       - '8080:8080'
@@ -29,6 +29,7 @@ services:
       - '9083:9083' # Metastore Thrift
     volumes:
       - ./conf/metastore-site.xml:/opt/apache-hive-metastore-3.0.0-bin/conf/metastore-site.xml:ro
+      - ./test:/opt/hive-metastore
     environment:
       METASTORE_TYPE: postgres
       METASTORE_DB_HOSTNAME: postgresdb
