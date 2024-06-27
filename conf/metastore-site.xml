@@ -11,7 +11,7 @@
   </property>
   <property>
     <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:postgresql://postgresdb:5432/metastore_db</value>
+    <value>jdbc:postgresql://postgresdb:5432/datalake-db</value>
     <description>JDBC connect string for a JDBC metastore</description>
   </property>
   <property>

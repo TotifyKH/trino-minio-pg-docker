@@ -8,7 +8,7 @@ TRINO_PORT = 8080
 TRINO_USER = 'admin'  # Replace with your Trino username if different
 TRINO_CATALOG = 'minio'
 TRINO_SCHEMA = 'test'
-TRINO_TABLE = 'exchange_rate'
+TRINO_TABLE = 'informal'
 
 def query_trino():
     # Create a Trino connection
@@ -38,7 +38,7 @@ def query_trino():
     time_taken = end_time - start_time
 
     # Print the results
-    print(f'Number of customers: {num_customers}')
+    print(f'Number of rows: {num_customers}')
     print(f'Time taken to query: {time_taken:.5f} seconds')
 
     # Close the cursor and connection
