@@ -12,6 +12,13 @@ Run the init shell script to initialize your superset
 Run the example shell script to get example datasets
 ```sh ./superset/example.sh```
 
+### Log into superset web client on port 8088
+- username: admin, password: admin
+- Connect to a database, select trino
+- Paste this into the SQL Alchemy URI
+```trino://admin@trino:8080/minio```
+- Click test connection, and click connect
+
 You're all done
 
 ### Run Trino CLI from container
