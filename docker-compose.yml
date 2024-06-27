@@ -1,7 +1,8 @@
 services:
   trino:
     image: 'trinodb/trino:latest'
-    hostname: trino
+    hostname: datalake-trino
+    container_name: datalake-trino
     ports:
       - '8080:8080'
     volumes:
@@ -11,28 +12,29 @@ services:
 
   postgresdb:
     image: 'postgres:latest'
-    hostname: postgresdb
+    hostname: datalake-postgres
+    container_name: datalake-postgres
     ports:
       - '54321:5432'
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: metastore_db
+      POSTGRES_DB: datalake-db
     networks:
       - trino-network
   
   hive-metastore:
-    # build: ./hive-metastore
-    hostname: hive-metastore
+    #build: ./hive-metastore
+    hostname: datalake-hive-metastore
+    container_name: datalake-hive-metastore
     image: 'docker.dev.digitaleconomy.gov.kh/trino-minio-pg-docker-hive-metastore:v1.0.0'
     ports:
       - '9083:9083' # Metastore Thrift
     volumes:
       - ./conf/metastore-site.xml:/opt/apache-hive-metastore-3.0.0-bin/conf/metastore-site.xml:ro
-      - ./test:/opt/hive-metastore
     environment:
       METASTORE_TYPE: postgres
-      METASTORE_DB_HOSTNAME: postgresdb
+      METASTORE_DB_HOSTNAME: datalake-postgres
       METASTORE_DB_PORT: 5432
     depends_on:
       - postgresdb
@@ -41,8 +43,8 @@ services:
 
   minio:
     image: 'minio/minio:latest'
-    hostname: minio
-    container_name: minio
+    hostname: datalake-minio
+    container_name: datalake-minio
     ports:
       - '9000:9000'
       - '9001:9001'
@@ -54,6 +56,41 @@ services:
     command: server --console-address ":9001" /data
     networks:
       - trino-network
+  
+  redis:
+    image: redis:latest
+    hostname: datalake-redis
+    container_name: datalake-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - trino-network
+
+  superset:
+    #build: ./superset\
+    hostname: datalake-superset
+    container_name: datalake-superset
+    image: docker.dev.digitaleconomy.gov.kh/trino-superset:v1.0.0
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_ENV: production
+      SUPERSET_LOAD_EXAMPLES: "no"
+      SUPERSET_WEBSERVER_TIMEOUT: 60
+      SUPERSET_SECRET_KEY: 'your_super_secret_key'
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: datalake-db
+      POSTGRES_HOST: datalake-postgres
+      REDIS_HOST: datalake-redis
+      REDIS_PORT: 6379
+    depends_on:
+      - postgresdb
+      - redis
+    networks:
+      - trino-network
+    volumes:
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py 
 
 volumes:
   minio-data:

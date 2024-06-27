@@ -22,16 +22,16 @@ RUN curl -L https://downloads.apache.org/hive/hive-standalone-metastore-${METAST
     rm -rf postgresql-42.4.0.jar && \
     rm -rf hive-exec-${METASTORE_VERSION}.jar
 
-COPY scripts/entrypoint.sh /entrypoint.sh
+COPY scripts/entrypoint.sh ./entrypoint.sh
 # COPY ./hive-exec-3.0.0.jar ${HIVE_HOME}/lib/
 
 
 RUN groupadd -r hive --gid=1000 && \
     useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \
     chown hive:hive -R ${HIVE_HOME} && \
-    chown hive:hive /entrypoint.sh && chmod +x /entrypoint.sh
+    chown hive:hive ./entrypoint.sh && chmod +x ./entrypoint.sh
 
 USER hive
 EXPOSE 9083
 
-ENTRYPOINT ["sh", "-c", "/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "./entrypoint.sh"]
